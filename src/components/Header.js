@@ -4,7 +4,7 @@ import logo from "../images/logo.svg";
 function Header() {
   return (
     <header className="header">
-      <img src={logo} className="mesto-logo" alt="mesto-logo" />
+      <img src={logo} className="header__logo" alt="mesto-logo" />
     </header>
   );
 }
