@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from "react";
-import PopupWithForm from "./PopupWithForm";
-import ImagePopup from "./ImagePopup";
 import Card from "./Card";
-import close from "../images/close.svg";
 import avatar from "../images/avatar.png";
 import edit from "../images/edit.svg";
 import plus from "../images/plus.svg";
@@ -11,17 +8,10 @@ import deleteIcon from "../images/delete.svg";
 import api from "../utils/api";
 
 const Main = ({
-  // открыты ли попапы
-  isEditProfilePopupOpen,
-  isAddPlacePopupOpen,
-  isEditAvatarPopupOpen,
-  selectedCard,
   // обработчики открытия попапов
   onEditAvatar,
   onEditProfile,
   onAddPlace,
-  // обработчик закрытия попапов
-  onCloseAllPopups,
   // обработчик нажатия на карточку
   onCardClick,
 }) => {
@@ -43,110 +33,6 @@ const Main = ({
 
   return (
     <main>
-      <PopupWithForm name="delete" title="Вы уверены?" />
-
-      <PopupWithForm
-        name="place"
-        title="Новое место"
-        isOpen={isAddPlacePopupOpen}
-        onClose={onCloseAllPopups}
-      >
-        <div className="popup__input-wrapper">
-          <input
-            id="add-place-name-field"
-            className="popup__input"
-            type="text"
-            name="name"
-            placeholder="Название"
-            minLength="2"
-            maxLength="30"
-            required
-          />
-          <span
-            id="add-place-name-field-error"
-            className="popup__input-error"
-          ></span>
-        </div>
-        <div className="popup__input-wrapper">
-          <input
-            id="add-place-link-field"
-            className="popup__input"
-            type="url"
-            name="link"
-            placeholder="Ссылка на картинку"
-            required
-          />
-          <span
-            id="add-place-link-field-error"
-            className="popup__input-error"
-          ></span>
-        </div>
-      </PopupWithForm>
-
-      <PopupWithForm
-        name="avatar"
-        title="Обновить аватар"
-        isOpen={isEditAvatarPopupOpen}
-        onClose={onCloseAllPopups}
-      >
-        <div className="popup__input-wrapper">
-          <input
-            id="add-avatar-link-field"
-            className="popup__input"
-            type="url"
-            name="link"
-            placeholder="Ссылка на аватар"
-            required
-          />
-          <span
-            id="add-avatar-link-field-error"
-            className="popup__input-error"
-          ></span>
-        </div>
-      </PopupWithForm>
-
-      <PopupWithForm
-        name="profile"
-        title="Редактировать профиль"
-        isOpen={isEditProfilePopupOpen}
-        onClose={onCloseAllPopups}
-      >
-        <div className="popup__input-wrapper">
-          <input
-            id="edit-name-field"
-            className="popup__input"
-            type="text"
-            name="name"
-            placeholder="Имя"
-            minLength="2"
-            maxLength="40"
-            required
-          />
-          <span
-            id="edit-name-field-error"
-            className="popup__input-error"
-          ></span>
-        </div>
-        <div className="popup__input-wrapper">
-          <input
-            id="edit-description-field"
-            className="popup__input"
-            type="text"
-            name="about"
-            placeholder="О себе"
-            minLength="2"
-            maxLength="200"
-            required
-          />
-          <span
-            id="edit-description-field-error"
-            className="popup__input-error"
-          ></span>
-        </div>
-      </PopupWithForm>
-
-      <ImagePopup card={selectedCard} onClose={onCloseAllPopups} />
-
       {/* <!-- блок профиля --> */}
       <section className="profile">
         <div className="profile__avatar-wrapper">

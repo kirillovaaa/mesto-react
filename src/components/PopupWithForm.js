@@ -1,5 +1,5 @@
 import React from "react";
-import close from "../images/close.svg";
+import closeIcon from "../images/close.svg";
 
 const PopupWithForm = ({ title, name, children, isOpen, onClose }) => {
   return (
@@ -19,7 +19,7 @@ const PopupWithForm = ({ title, name, children, isOpen, onClose }) => {
           id="popup-profile-close"
           onClick={onClose}
         >
-          <img className="popup__close-icon" src={close} alt="Закрыть" />
+          <img className="popup__close-icon" src={closeIcon} alt="Закрыть" />
         </button>
       </form>
     </div>
