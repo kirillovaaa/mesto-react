@@ -11,7 +11,7 @@ class Api {
     return Promise.reject(`Ошибка: ${res.status}`);
   }
 
-  getMe() {
+  getUserInfo() {
     return fetch(`${this._baseUrl}/users/me`, {
       headers: this._headers,
     }).then(this._getResponseData);
@@ -66,6 +66,13 @@ class Api {
       method: "DELETE",
       headers: this._headers,
     }).then(this._getResponseData);
+  };
+
+  changeLikeCardStatus = (id, toIsLiked) => {
+    if (toIsLiked) {
+      return this.addLike(id);
+    }
+    return this.removeLike(id);
   };
 }
 

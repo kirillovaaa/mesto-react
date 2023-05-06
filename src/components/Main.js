@@ -1,42 +1,35 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Card from "./Card";
 import avatar from "../images/avatar.png";
 import edit from "../images/edit.svg";
 import plus from "../images/plus.svg";
 import heartStroke from "../images/heart-stroke.svg";
 import deleteIcon from "../images/delete.svg";
-import api from "../utils/api";
+import CurrentUserContext from "../contexts/CurrentUserContext";
 
 const Main = ({
+  cards,
   // обработчики открытия попапов
   onEditAvatar,
   onEditProfile,
   onAddPlace,
   // обработчик нажатия на карточку
   onCardClick,
+  onCardLike,
+  onCardDelete,
 }) => {
-  const [userName, setUserName] = useState();
-  const [userDescription, setUserDescription] = useState();
-  const [userAvatar, setUserAvatar] = useState(avatar);
-  const [cards, setCards] = useState([]);
-
-  useEffect(() => {
-    Promise.all([api.getMe(), api.getInitialCards()])
-      .then(([me, cards]) => {
-        setUserName(me.name);
-        setUserDescription(me.about);
-        setUserAvatar(me.avatar);
-        setCards(cards);
-      })
-      .catch((err) => console.log(err));
-  }, []);
+  const currentUser = useContext(CurrentUserContext);
 
   return (
     <main>
       {/* <!-- блок профиля --> */}
       <section className="profile">
         <div className="profile__avatar-wrapper">
-          <img className="profile__avatar" src={userAvatar} alt="Аватар" />
+          <img
+            className="profile__avatar"
+            src={currentUser.avatar}
+            alt="Аватар"
+          />
           <button className="profile__avatar-edit" onClick={onEditAvatar}>
             <img
               className="profile__edit-icon"
@@ -45,9 +38,10 @@ const Main = ({
             />
           </button>
         </div>
+
         <div className="profile__info">
           <div className="profile__heading">
-            <h1 className="profile__name">{userName}</h1>
+            <h1 className="profile__name">{currentUser.name}</h1>
             <button
               type="button"
               className="profile__edit-button"
@@ -60,7 +54,7 @@ const Main = ({
               />
             </button>
           </div>
-          <p className="profile__description">{userDescription}</p>
+          <p className="profile__description">{currentUser.about}</p>
         </div>
         <button
           className="profile__add-button"
@@ -74,7 +68,13 @@ const Main = ({
       {/* <!-- сетка с карточками мест --> */}
       <section className="places">
         {cards.map((card) => (
-          <Card key={card._id} card={card} onClick={onCardClick} />
+          <Card
+            key={card._id}
+            card={card}
+            onClick={onCardClick}
+            onLike={onCardLike}
+            onDelete={onCardDelete}
+          />
         ))}
       </section>
 

@@ -1,15 +1,42 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import api from "../utils/api";
 import Header from "./Header";
 import PopupWithForm from "./PopupWithForm";
 import ImagePopup from "./ImagePopup";
 import Main from "./Main";
 import Footer from "./Footer";
+import CurrentUserContext from "../contexts/CurrentUserContext";
 
-function App() {
+const defaultUser = {
+  _id: undefined,
+  name: undefined,
+  about: undefined,
+  avatar: undefined,
+};
+
+const App = () => {
+  const [currentUser, setCurrentUser] = useState(defaultUser);
+  const [cards, setCards] = useState([]);
+
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
+
+  useEffect(() => {
+    const getData = async () => {
+      const user = await api.getUserInfo();
+      const cards = await api.getInitialCards();
+      return { user, cards };
+    };
+
+    getData()
+      .then(({ user, cards }) => {
+        setCurrentUser(user);
+        setCards(cards);
+      })
+      .catch((e) => console.log(e));
+  }, []);
 
   const handleEditAvatarClick = () => {
     setIsEditAvatarPopupOpen(true);
@@ -34,8 +61,28 @@ function App() {
     setSelectedCard(card);
   };
 
+  const handleCardLike = (cardId, isLiked) => {
+    api.changeLikeCardStatus(cardId, !isLiked).then((newCard) => {
+      setCards(
+        cards.map((oldCard) => {
+          if (oldCard._id === newCard._id) {
+            return newCard;
+          }
+          return oldCard;
+        })
+      );
+    });
+  };
+
+  const handleCardDelete = (cardId) => {
+    api
+      .removeCard(cardId)
+      .then((res) => console.log(res))
+      .catch((e) => console.log(e));
+  };
+
   return (
-    <>
+    <CurrentUserContext.Provider value={currentUser}>
       <Header />
 
       <PopupWithForm name="delete" title="Вы уверены?" />
@@ -143,17 +190,20 @@ function App() {
       <ImagePopup card={selectedCard} onClose={closeAllPopups} />
 
       <Main
+        cards={cards}
         // обработчики открытия попапов
         onEditAvatar={handleEditAvatarClick}
         onEditProfile={handleEditProfileClick}
         onAddPlace={handleAddPlaceClick}
         // обработчик нажатия на карточку
         onCardClick={handleCardClick}
+        onCardLike={handleCardLike}
+        onCardDelete={handleCardDelete}
       />
 
       <Footer />
-    </>
+    </CurrentUserContext.Provider>
   );
-}
+};
 
 export default App;
