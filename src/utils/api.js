@@ -23,7 +23,7 @@ class Api {
     }).then(this._getResponseData);
   }
 
-  updateProfile = (name, about) => {
+  setUserInfo = (name, about) => {
     return fetch(`${this._baseUrl}/users/me`, {
       method: "PATCH",
       headers: this._headers,
@@ -31,7 +31,7 @@ class Api {
     }).then(this._getResponseData);
   };
 
-  updateAvatar = (avatarSrc) => {
+  setUserAvatar = (avatarSrc) => {
     return fetch(`${this._baseUrl}/users/me/avatar`, {
       method: "PATCH",
       headers: this._headers,

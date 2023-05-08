@@ -1,10 +1,22 @@
 import React from "react";
 import closeIcon from "../images/close.svg";
 
-const PopupWithForm = ({ title, name, children, isOpen, onClose }) => {
+const PopupWithForm = ({
+  title,
+  name,
+  children,
+  isOpen,
+  onClose,
+  onSubmit,
+}) => {
+  const handleSubmit = (e) => {
+    e.preventDefault(); // отменяем стандартный переход на адрес формы
+    onSubmit(e);
+  };
+
   return (
     <div className={`popup ${isOpen && "popup_opened"}`} id={`popup-${name}`}>
-      <form className="popup__form" name={name}>
+      <form className="popup__form" name={name} onSubmit={handleSubmit}>
         <h2 className="popup__heading">{title}</h2>
 
         {children}
