@@ -79,22 +79,20 @@ const Main = ({
       </section>
 
       {/* <!-- шаблон карточки места --> */}
-      <template id="place-card-template">
-        <div className="places__item">
-          <img className="places__image" />
-          <div className="places__name-wrapper">
-            <h2 className="places__name"></h2>
-            <button type="button" className="places__fav-button">
-              <img className="places__fav-image" src={heartStroke} />
+      <div className="places__item">
+        <img className="places__image" />
+        <div className="places__name-wrapper">
+          <h2 className="places__name"></h2>
+          <button type="button" className="places__fav-button">
+            <img className="places__fav-image" src={heartStroke} />
 
-              <span className="places__fav-likes"></span>
-            </button>
-          </div>
-          <button type="button" className="places__delete-button">
-            <img className="places__delete-icon" src={deleteIcon} />
+            <span className="places__fav-likes"></span>
           </button>
         </div>
-      </template>
+        <button type="button" className="places__delete-button">
+          <img className="places__delete-icon" src={deleteIcon} />
+        </button>
+      </div>
     </main>
   );
 };

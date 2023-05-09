@@ -37,6 +37,7 @@ const App = () => {
       .then(({ user, cards }) => {
         setCurrentUser(user);
         setCards(cards);
+        closeAllPopups();
       })
       .catch((e) => console.log(e));
   }, []);
@@ -65,21 +66,25 @@ const App = () => {
   };
 
   const handleCardLike = (cardId, isLiked) => {
-    api.changeLikeCardStatus(cardId, !isLiked).then((newCard) => {
-      setCards(
-        cards.map((oldCard) =>
-          oldCard._id === newCard._id ? newCard : oldCard
-        )
-      );
-    });
+    api
+      .changeLikeCardStatus(cardId, !isLiked)
+      .then((newCard) => {
+        setCards((cards) =>
+          cards.map((oldCard) =>
+            oldCard._id === newCard._id ? newCard : oldCard
+          )
+        );
+        closeAllPopups();
+      })
+      .catch((e) => console.log(e));
   };
 
   const handleCardDelete = (cardId) => {
     api
       .removeCard(cardId)
-      .then((res) => {
-        const newCards = cards.filter((card) => card._id !== cardId);
-        setCards(newCards);
+      .then(() => {
+        setCards((cards) => cards.filter((card) => card._id !== cardId));
+        closeAllPopups();
       })
       .catch((e) => console.log(e));
   };
@@ -89,11 +94,9 @@ const App = () => {
       .setUserInfo(name, about)
       .then((newUser) => {
         setCurrentUser(newUser);
-      })
-      .catch((e) => console.log(e))
-      .finally(() => {
         closeAllPopups();
-      });
+      })
+      .catch((e) => console.log(e));
   };
 
   const handleUpdateAvatar = ({ avatar }) => {
@@ -101,11 +104,9 @@ const App = () => {
       .setUserAvatar(avatar)
       .then((newUser) => {
         setCurrentUser(newUser);
-      })
-      .catch((e) => console.log(e))
-      .finally(() => {
         closeAllPopups();
-      });
+      })
+      .catch((e) => console.log(e));
   };
 
   const handleAddPlaceSubmit = ({ name, link }) => {
@@ -113,11 +114,9 @@ const App = () => {
       .addCard(name, link)
       .then((newCard) => {
         setCards([newCard, ...cards]);
-      })
-      .catch((e) => console.log(e))
-      .finally(() => {
         closeAllPopups();
-      });
+      })
+      .catch((e) => console.log(e));
   };
 
   return (

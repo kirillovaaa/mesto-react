@@ -15,18 +15,21 @@ const Card = ({ card, onClick, onLike, onDelete }) => {
   };
 
   const handleLike = (e) => {
-    e.stopPropagation();
     onLike(card._id, isLiked);
   };
 
   const handleDelete = (e) => {
-    e.stopPropagation();
     onDelete(card._id);
   };
 
   return (
-    <div className="places__item" onClick={handleClick}>
-      <img className="places__image" src={card.link} alt={card.name} />
+    <div className="places__item">
+      <img
+        className="places__image"
+        src={card.link}
+        alt={card.name}
+        onClick={handleClick}
+      />
 
       <div className="places__name-wrapper">
         <h2 className="places__name">{card.name}</h2>
