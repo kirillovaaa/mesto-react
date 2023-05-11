@@ -32,7 +32,7 @@ const Main = ({
           />
           <button className="profile__avatar-edit" onClick={onEditAvatar}>
             <img
-              className="profile__edit-icon"
+              className="profile__avatar-edit-icon"
               src={edit}
               alt="Редактировать"
             />
@@ -77,22 +77,6 @@ const Main = ({
           />
         ))}
       </section>
-
-      {/* <!-- шаблон карточки места --> */}
-      <div className="places__item">
-        <img className="places__image" />
-        <div className="places__name-wrapper">
-          <h2 className="places__name"></h2>
-          <button type="button" className="places__fav-button">
-            <img className="places__fav-image" src={heartStroke} />
-
-            <span className="places__fav-likes"></span>
-          </button>
-        </div>
-        <button type="button" className="places__delete-button">
-          <img className="places__delete-icon" src={deleteIcon} />
-        </button>
-      </div>
     </main>
   );
 };

@@ -37,7 +37,6 @@ const App = () => {
       .then(({ user, cards }) => {
         setCurrentUser(user);
         setCards(cards);
-        closeAllPopups();
       })
       .catch((e) => console.log(e));
   }, []);
@@ -74,7 +73,6 @@ const App = () => {
             oldCard._id === newCard._id ? newCard : oldCard
           )
         );
-        closeAllPopups();
       })
       .catch((e) => console.log(e));
   };
@@ -84,7 +82,6 @@ const App = () => {
       .removeCard(cardId)
       .then(() => {
         setCards((cards) => cards.filter((card) => card._id !== cardId));
-        closeAllPopups();
       })
       .catch((e) => console.log(e));
   };
