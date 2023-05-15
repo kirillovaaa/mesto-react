@@ -1,0 +1,9 @@
+.signup__login-button {
+  margin-bottom: 80px;
+  background-color: transparent;
+  border: none;
+  font-size: 14px;
+  line-height: 17px;
+  color: white;
+  text-decoration-line: underline;
+}

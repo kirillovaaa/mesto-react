@@ -1,0 +1,11 @@
+.signup__registration-button {
+  font-size: 18px;
+  line-height: 22px;
+  text-align: center;
+  color: #000000;
+  background: #ffffff;
+  border-radius: 2px;
+  height: 50px;
+  border: none;
+  margin-bottom: 15px;
+}

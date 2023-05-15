@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { Routes, Route } from "react-router-dom";
+import Login from "./Login";
+import Register from "./Register";
 import api from "../utils/api";
 import Header from "./Header";
 import PopupWithForm from "./PopupWithForm";
@@ -118,43 +121,48 @@ const App = () => {
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
-      <Header />
+      <Header isLoggedIn={false} />
 
-      <PopupWithForm name="delete" title="Вы уверены?" />
-
-      <AddPlacePopup
-        isOpen={isAddPlacePopupOpen}
-        onClose={closeAllPopups}
-        onAddPlace={handleAddPlaceSubmit}
-      />
-
-      <EditAvatarPopup
-        isOpen={isEditAvatarPopupOpen}
-        onClose={closeAllPopups}
-        onUpdateAvatar={handleUpdateAvatar}
-      />
-
-      <EditProfilePopup
-        isOpen={isEditProfilePopupOpen}
-        onClose={closeAllPopups}
-        onUpdateUser={handleUpdateUser}
-      />
-
-      <ImagePopup card={selectedCard} onClose={closeAllPopups} />
-
-      <Main
-        cards={cards}
-        // обработчики открытия попапов
-        onEditAvatar={handleEditAvatarClick}
-        onEditProfile={handleEditProfileClick}
-        onAddPlace={handleAddPlaceClick}
-        // обработчик нажатия на карточку
-        onCardClick={handleCardClick}
-        onCardLike={handleCardLike}
-        onCardDelete={handleCardDelete}
-      />
-
-      <Footer />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <PopupWithForm name="delete" title="Вы уверены?" />
+              <AddPlacePopup
+                isOpen={isAddPlacePopupOpen}
+                onClose={closeAllPopups}
+                onAddPlace={handleAddPlaceSubmit}
+              />
+              <EditAvatarPopup
+                isOpen={isEditAvatarPopupOpen}
+                onClose={closeAllPopups}
+                onUpdateAvatar={handleUpdateAvatar}
+              />
+              <EditProfilePopup
+                isOpen={isEditProfilePopupOpen}
+                onClose={closeAllPopups}
+                onUpdateUser={handleUpdateUser}
+              />
+              <ImagePopup card={selectedCard} onClose={closeAllPopups} />
+              <Main
+                cards={cards}
+                // обработчики открытия попапов
+                onEditAvatar={handleEditAvatarClick}
+                onEditProfile={handleEditProfileClick}
+                onAddPlace={handleAddPlaceClick}
+                // обработчик нажатия на карточку
+                onCardClick={handleCardClick}
+                onCardLike={handleCardLike}
+                onCardDelete={handleCardDelete}
+              />
+              <Footer />
+            </>
+          }
+        />
+        <Route path="/sign-in" element={<Login />} />
+        <Route path="/sign-up" element={<Register />} />
+      </Routes>
     </CurrentUserContext.Provider>
   );
 };

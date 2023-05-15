@@ -4,6 +4,7 @@
   margin-top: 28px;
   margin-left: 27px;
   margin-bottom: 31.6px;
+  user-select: none;
 }
 
 @media all and (min-width: 918px) {
