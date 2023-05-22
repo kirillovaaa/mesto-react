@@ -18,7 +18,7 @@ const mapLinks = {
   },
 };
 
-function Header({ isLoggedIn }) {
+const Header = ({ isLoggedIn }) => {
   const currentUser = useContext(CurrentUserContext);
   const { pathname } = useLocation();
 
@@ -35,6 +35,6 @@ function Header({ isLoggedIn }) {
       )}
     </header>
   );
-}
+};
 
 export default Header;

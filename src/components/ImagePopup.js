@@ -6,13 +6,10 @@ const ImagePopup = ({ card, onClose }) => {
     <div className={`popup ${card && "popup_opened"}`} id="popup-image">
       <div className="popup__image-wrapper">
         <img className="popup__image" src={card?.link} alt={card?.name} />
+
         <p className="popup__image-description">{card?.name}</p>
-        <button
-          className="popup__close-button"
-          type="button"
-          id="popup-image-close"
-          onClick={onClose}
-        >
+
+        <button className="popup__close-button" type="button" onClick={onClose}>
           <img className="popup__close-icon" src={closeIcon} alt="Закрыть" />
         </button>
       </div>

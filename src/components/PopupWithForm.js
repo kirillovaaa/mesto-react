@@ -15,7 +15,7 @@ const PopupWithForm = ({
   };
 
   return (
-    <div className={`popup ${isOpen && "popup_opened"}`} id={`popup-${name}`}>
+    <div className={`popup ${isOpen && "popup_opened"}`}>
       <form className="popup__form" name={name} onSubmit={handleSubmit}>
         <h2 className="popup__heading">{title}</h2>
 
