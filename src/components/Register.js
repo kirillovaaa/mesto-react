@@ -1,81 +1,61 @@
-import React, { useState } from "react";
+import React, { useRef } from "react";
+import { Link } from "react-router-dom";
 import logo from "../images/logo.svg";
 import InfoTooltip from "./InfoTooltip";
 
-const Register = () => {
-  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
-  const [isSuccessful, setIsSuccessful] = useState(false);
+const Register = ({ onSubmit }) => {
+  const email = useRef();
+  const password = useRef();
 
-  const handleTooltipClose = () => {
-    console.log(isTooltipOpen);
-    setIsTooltipOpen(false);
-  };
-
-  const handleRegisterClick = () => {
-    setIsTooltipOpen(true);
+  const handleSubmit = (e) => {
+    e.preventDefault(); // отменяем стандартный переход на адрес формы
+    onSubmit({
+      email: email.current.value,
+      password: password.current.value,
+    });
   };
 
   return (
     <>
-      <InfoTooltip
-        isOpen={isTooltipOpen}
-        isSuccessful={false}
-        onClose={handleTooltipClose}
-      />
-
-      <form className="signup">
+      <form className="signup" onSubmit={handleSubmit}>
         <div className="signup__registration">
           <h1 className="signup__heading">Регистрация</h1>
 
           <div className="signup__input-wrapper">
             <input
-              id="signup-registration-password-field"
+              ref={email}
               className="signup__input"
-              type="text"
+              type="email"
+              autoComplete="email"
+              name="email"
+              placeholder="Email"
+              required={true}
+            />
+          </div>
+
+          <div className="signup__input-wrapper">
+            <input
+              ref={password}
+              className="signup__input"
+              type="password"
+              autoComplete="new-password"
               name="password"
               placeholder="Пароль"
               minLength="2"
               maxLength="30"
               required={true}
-              // value={name}
             />
-
-            {/* <span
-            id="signup-registration-password-field-error"
-            className="signup__input-error"
-          ></span> */}
-          </div>
-
-          <div className="signup__input-wrapper">
-            <input
-              id="signup-registration-link-field"
-              className="signup__input"
-              type="url"
-              name="link"
-              placeholder="Email"
-              required={true}
-              // value={link}
-            />
-
-            {/* 
-          <span
-            id="signup-registration-link-field-error"
-            className="signup__input-error"
-          ></span> */}
           </div>
         </div>
 
         <div className="signup__footer">
-          <button
-            className="signup__registration-button"
-            onClick={handleRegisterClick}
-          >
+          <button className="signup__registration-button" type="submit">
             Зарегистрироваться
           </button>
 
-          <button className="signup__login-button">
+          <Link to="/sign-in" className="signup__login-button" type="button">
             Уже зарегистрированы? Войти
-          </button>
+          </Link>
         </div>
       </form>
     </>

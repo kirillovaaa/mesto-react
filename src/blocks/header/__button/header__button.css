@@ -5,4 +5,11 @@
   line-height: 22px;
   color: white;
   text-decoration: none;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.15s ease-in-out;
+}
+
+.header__button:hover {
+  opacity: 0.6;
 }

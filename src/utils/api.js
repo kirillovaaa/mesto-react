@@ -4,11 +4,36 @@ class Api {
     this._headers = options.headers;
   }
 
+  setToken(token) {
+    this._headers.authorization = `Bearer ${token}`;
+  }
+
   _getResponseData(res) {
     if (res.ok) {
-      return res.json();
+      return res.json().then((res) => res.data);
     }
     return Promise.reject(`Ошибка: ${res.status}`);
+  }
+
+  register(email, password) {
+    return fetch(`${this._baseUrl}/signup`, {
+      method: "POST",
+      headers: this._headers,
+      body: JSON.stringify({ email, password }),
+    }).then(this._getResponseData);
+  }
+
+  login(email, password) {
+    return fetch(`${this._baseUrl}/signin`, {
+      method: "POST",
+      headers: this._headers,
+      body: JSON.stringify({ email, password }),
+    }).then((res) => {
+      if (res.ok) {
+        return res.json().then((json) => json.token);
+      }
+      return Promise.reject(`Ошибка авторизации: ${res.status}`);
+    });
   }
 
   getUserInfo() {
@@ -77,9 +102,8 @@ class Api {
 }
 
 export default new Api({
-  baseUrl: "https://mesto.nomoreparties.co/v1/cohort-60",
+  baseUrl: "https://auth.nomoreparties.co",
   headers: {
-    authorization: "7cc35801-29be-4380-959c-1a6e60ca73ce",
     "Content-Type": "application/json",
   },
 });

@@ -3,8 +3,6 @@ import Card from "./Card";
 import avatar from "../images/avatar.png";
 import edit from "../images/edit.svg";
 import plus from "../images/plus.svg";
-import heartStroke from "../images/heart-stroke.svg";
-import deleteIcon from "../images/delete.svg";
 import CurrentUserContext from "../contexts/CurrentUserContext";
 
 const Main = ({
@@ -67,15 +65,18 @@ const Main = ({
 
       {/* <!-- сетка с карточками мест --> */}
       <section className="places">
-        {cards.map((card) => (
-          <Card
-            key={card._id}
-            card={card}
-            onClick={onCardClick}
-            onLike={onCardLike}
-            onDelete={onCardDelete}
-          />
-        ))}
+        {cards
+          .slice(0)
+          .reverse()
+          .map((card) => (
+            <Card
+              key={card._id}
+              card={card}
+              onClick={onCardClick}
+              onLike={onCardLike}
+              onDelete={onCardDelete}
+            />
+          ))}
       </section>
     </main>
   );

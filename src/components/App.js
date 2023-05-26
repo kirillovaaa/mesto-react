@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import Login from "./Login";
 import Register from "./Register";
+import InfoTooltip from "./InfoTooltip";
 import api from "../utils/api";
 import Header from "./Header";
 import PopupWithForm from "./PopupWithForm";
@@ -11,38 +12,80 @@ import AddPlacePopup from "./AddPlacePopup";
 import ImagePopup from "./ImagePopup";
 import Main from "./Main";
 import Footer from "./Footer";
+import ProtectedRoute from "./ProtectedRoute";
 import CurrentUserContext from "../contexts/CurrentUserContext";
 
 const defaultUser = {
   _id: "",
+  email: "",
   name: "",
   about: "",
   avatar: "",
 };
 
 const App = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const [currentUser, setCurrentUser] = useState(defaultUser);
   const [cards, setCards] = useState([]);
+
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+  const [isTooltipSuccessful, setIsTooltipSuccessful] = useState(false);
 
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
 
-  useEffect(() => {
-    const getData = async () => {
-      const user = await api.getUserInfo();
-      const cards = await api.getInitialCards();
-      return { user, cards };
-    };
+  const navigate = useNavigate();
 
-    getData()
-      .then(({ user, cards }) => {
-        setCurrentUser(user);
-        setCards(cards);
-      })
-      .catch((e) => console.log(e));
+  // при старте приложения ищем токен в localstorage
+  useEffect(() => {
+    handleTokenCheck();
   }, []);
+
+  // эффект для запроса на получение карточек
+  // (работает только тогда, когда isLoggedIn)
+  useEffect(() => {
+    if (isLoggedIn) {
+      const getData = async () => {
+        const user = await api.getUserInfo();
+        const cards = await api.getInitialCards();
+        return { user, cards };
+      };
+
+      getData()
+        .then(({ user, cards }) => {
+          setCurrentUser(user);
+          setCards(cards);
+        })
+        .catch((e) => console.log(e));
+    }
+  }, [isLoggedIn]);
+
+  const handleTokenCheck = () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      // если токен есть, то выполняем проверку
+      api.setToken(token);
+      api
+        .getUserInfo()
+        .then(() => {
+          // если токен рабочий, то приложение должно направиться на главную
+          setIsLoggedIn(true);
+          navigate("/", { replace: true });
+        })
+        .catch((e) => {
+          // если токен больше недействителен, пишем ошибку
+          console.log(`ошибка сохраненного токена: (${e})`);
+        });
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+  };
 
   const handleEditAvatarClick = () => {
     setIsEditAvatarPopupOpen(true);
@@ -61,6 +104,7 @@ const App = () => {
     setIsAddPlacePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
     setSelectedCard(null);
+    setIsTooltipOpen(false);
   };
 
   const handleCardClick = (card) => {
@@ -113,55 +157,108 @@ const App = () => {
     api
       .addCard(name, link)
       .then((newCard) => {
-        setCards([newCard, ...cards]);
+        setCards([...cards, newCard]);
         closeAllPopups();
       })
       .catch((e) => console.log(e));
   };
 
+  const handleRegisterSubmit = ({ email, password }) => {
+    api
+      .register(email, password)
+      .then(() => {
+        setIsTooltipOpen(true);
+        setIsTooltipSuccessful(true);
+        navigate("/sign-in");
+      })
+      .catch((e) => {
+        setIsTooltipOpen(true);
+        setIsTooltipSuccessful(false);
+        console.log(e);
+      });
+  };
+
+  const handleLoginSubmit = ({ email, password }) => {
+    api
+      .login(email, password)
+      .then((token) => {
+        setIsTooltipOpen(true);
+        setIsTooltipSuccessful(true);
+        localStorage.setItem("token", token);
+        api.setToken(token);
+        setIsLoggedIn(true);
+        navigate("/", { replace: true });
+      })
+      .catch((e) => {
+        setIsTooltipOpen(true);
+        setIsTooltipSuccessful(false);
+        console.log(e);
+      });
+  };
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
-      <Header isLoggedIn={false} />
+      <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+
+      <InfoTooltip
+        isOpen={isTooltipOpen}
+        isSuccessful={isTooltipSuccessful}
+        onClose={closeAllPopups}
+      />
 
       <Routes>
         <Route
           path="/"
+          index={true}
           element={
-            <>
-              <PopupWithForm name="delete" title="Вы уверены?" />
-              <AddPlacePopup
-                isOpen={isAddPlacePopupOpen}
-                onClose={closeAllPopups}
-                onAddPlace={handleAddPlaceSubmit}
-              />
-              <EditAvatarPopup
-                isOpen={isEditAvatarPopupOpen}
-                onClose={closeAllPopups}
-                onUpdateAvatar={handleUpdateAvatar}
-              />
-              <EditProfilePopup
-                isOpen={isEditProfilePopupOpen}
-                onClose={closeAllPopups}
-                onUpdateUser={handleUpdateUser}
-              />
-              <ImagePopup card={selectedCard} onClose={closeAllPopups} />
-              <Main
-                cards={cards}
-                // обработчики открытия попапов
-                onEditAvatar={handleEditAvatarClick}
-                onEditProfile={handleEditProfileClick}
-                onAddPlace={handleAddPlaceClick}
-                // обработчик нажатия на карточку
-                onCardClick={handleCardClick}
-                onCardLike={handleCardLike}
-                onCardDelete={handleCardDelete}
-              />
-              <Footer />
-            </>
+            <ProtectedRoute
+              isLoggedIn={isLoggedIn}
+              element={() => (
+                <>
+                  <PopupWithForm name="delete" title="Вы уверены?" />
+                  <AddPlacePopup
+                    isOpen={isAddPlacePopupOpen}
+                    onClose={closeAllPopups}
+                    onAddPlace={handleAddPlaceSubmit}
+                  />
+                  <EditAvatarPopup
+                    isOpen={isEditAvatarPopupOpen}
+                    onClose={closeAllPopups}
+                    onUpdateAvatar={handleUpdateAvatar}
+                  />
+                  <EditProfilePopup
+                    isOpen={isEditProfilePopupOpen}
+                    onClose={closeAllPopups}
+                    onUpdateUser={handleUpdateUser}
+                  />
+                  <ImagePopup card={selectedCard} onClose={closeAllPopups} />
+                  <Main
+                    cards={cards}
+                    // обработчики открытия попапов
+                    onEditAvatar={handleEditAvatarClick}
+                    onEditProfile={handleEditProfileClick}
+                    onAddPlace={handleAddPlaceClick}
+                    // обработчик нажатия на карточку
+                    onCardClick={handleCardClick}
+                    onCardLike={handleCardLike}
+                    onCardDelete={handleCardDelete}
+                  />
+                  <Footer />
+                </>
+              )}
+            />
           }
         />
-        <Route path="/sign-in" element={<Login />} />
-        <Route path="/sign-up" element={<Register />} />
+
+        <Route
+          path="/sign-in"
+          element={<Login onSubmit={handleLoginSubmit} />}
+        />
+
+        <Route
+          path="/sign-up"
+          element={<Register onSubmit={handleRegisterSubmit} />}
+        />
       </Routes>
     </CurrentUserContext.Provider>
   );

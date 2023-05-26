@@ -8,7 +8,7 @@ const Card = ({ card, onClick, onLike, onDelete }) => {
   const currentUser = useContext(CurrentUserContext);
 
   const isOwn = card.owner._id === currentUser._id;
-  const isLiked = card.likes.some((user) => user._id === currentUser._id);
+  const isLiked = card.likes.some((userId) => userId === currentUser._id);
 
   const handleClick = () => {
     onClick(card);
